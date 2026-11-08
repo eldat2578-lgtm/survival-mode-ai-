@@ -33,7 +33,7 @@ CHALLENGES = [
     "With No Way to Contact Anyone?"
 ]
 
-    STYLE = (
+STYLE = (
     "Use the exact same character in every scene. "
     "Classic minimalist 2D stickman. "
     "Large round white head with thick black outline. "
