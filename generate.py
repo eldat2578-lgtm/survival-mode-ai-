@@ -1,65 +1,49 @@
 import random
 from datetime import datetime
 
-TOPICS = [
-    "What If You Were Lost in a Desert?",
-    "What If You Had to Survive in the Arctic?",
-    "What If You Were Stranded on an Island?",
-    "What If You Had No Clean Water?",
-    "What If You Were Lost in a Dense Forest?",
-    "What If You Had to Survive a Huge Storm?",
-    "What If You Were Trapped in a Snowstorm?",
-    "What If You Had to Survive Without Electricity?",
+situations = [
+    "waking up alone",
+    "getting stranded",
+    "being trapped",
+    "losing all communication",
+    "having no supplies",
+    "getting lost"
 ]
 
-def create_script(topic):
-    return f"""
-TITLE: {topic}
+places = [
+    "in a mysterious forest",
+    "on a deserted island",
+    "in the Arctic",
+    "in a remote desert",
+    "inside an abandoned city",
+    "in the mountains"
+]
 
-[HOOK]
-Imagine waking up in a place where nobody can hear you.
-You have no map, no phone signal, and no idea where you are.
-What would you do?
+challenges = [
+    "with no food or water",
+    "during a powerful storm",
+    "with no electricity",
+    "during the coldest night",
+    "with limited resources"
+]
 
-[INTRO]
-Today, we explore a survival scenario:
-{topic}
-
-[SCENE 1]
-First, you need to understand your surroundings.
-Stay calm and avoid rushing into unknown areas.
-
-[SCENE 2]
-Your next priority is finding a safe place.
-Look for shelter from weather and other hazards.
-
-[SCENE 3]
-Water is essential.
-Only drink water that has been made safe to drink.
-
-[SCENE 4]
-Save your energy and make a clear plan.
-If possible, contact emergency services and signal for help.
-
-[ENDING]
-Survival is not about being fearless.
-It is about staying calm, thinking clearly, and making smart decisions.
-
-Subscribe to SURVIVAL MODE for more survival scenarios.
-"""
+def generate_topic():
+    return (
+        "What If You Were "
+        + random.choice(situations)
+        + " "
+        + random.choice(places)
+        + " "
+        + random.choice(challenges)
+        + "?"
+    )
 
 def main():
-    today = datetime.now().strftime("%Y-%m-%d")
-    topic = random.choice(TOPICS)
-    script = create_script(topic)
+    topic = generate_topic()
 
-    print("================================")
-    print("       SURVIVAL MODE")
-    print("================================")
-    print("Date:", today)
-    print("Today's topic:", topic)
-    print("\nGENERATED SCRIPT:\n")
-    print(script)
+    print("SURVIVAL MODE")
+    print("Date:", datetime.now().strftime("%Y-%m-%d"))
+    print("NEW TOPIC:", topic)
 
 if __name__ == "__main__":
     main()
