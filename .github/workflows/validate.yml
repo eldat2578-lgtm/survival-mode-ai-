@@ -18,8 +18,33 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install -r requirements.txt
       - name: Check Python syntax
         run: python -m py_compile generate.py audio_track.py
       - name: Check required imports
         run: python -c "import PIL, imageio, numpy, edge_tts"
+      - name: Render and inspect a real MP4 sample
+        env:
+          SURVIVAL_SKIP_AUDIO: "1"
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import imageio.v2 as imageio
+          from generate import render_video
+
+          output = render_video(
+              "a dense forest", 1, 1, "smoke_test.mp4"
+          )
+          assert output.exists() and output.stat().st_size > 20000
+          reader = imageio.get_reader(str(output))
+          metadata = reader.get_meta_data()
+          frame = reader.get_data(0)
+          reader.close()
+          assert frame.shape == (720, 1280, 3), frame.shape
+          assert metadata.get("fps", 0) >= 10, metadata
+          print("MP4 smoke test passed:", output.stat().st_size, "bytes")
+          output.unlink()
+          PY
