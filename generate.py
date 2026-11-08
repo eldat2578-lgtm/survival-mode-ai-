@@ -104,7 +104,8 @@ def make_scenes(topic, count):
 def S(v):
     return int(v * SCALE)
 
-@lru_cache(maxsize=32)\ndef font(size, bold=False):
+@lru_cache(maxsize=32)
+def font(size, bold=False):
     candidates = (["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"] if bold else
                   ["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"])
     try:
