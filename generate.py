@@ -1,4 +1,5 @@
 import math
+import os
 import random
 from functools import lru_cache
 from datetime import datetime
@@ -177,7 +178,8 @@ def render_video(topic, scene_count, seconds_per_scene, filename):
                 im=im.resize((WIDTH,HEIGHT),Image.Resampling.LANCZOS)
                 writer.append_data(np.asarray(im))
     narration = topic + ". " + " ".join(s.split("ACTION: ", 1)[1].strip() for s in scenes)
-    add_audio(output, narration, scene_count * seconds_per_scene)
+    if os.environ.get("SURVIVAL_SKIP_AUDIO") != "1":
+        add_audio(output, narration, scene_count * seconds_per_scene)
     print("VIDEO CREATED:",output)
     return output
 
