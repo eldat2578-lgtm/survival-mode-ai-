@@ -34,16 +34,72 @@ def generate_topics(history):
     return random.sample(available, 2)
 
 def make_scenes(topic, count):
+    # A clear survival-story arc, with a distinct action in every scene.
     beats = [
-        "A sudden discovery changes everything.",
-        "The survivor studies the unfamiliar landscape.",
-        "A distant sound interrupts the silence.",
-        "The survivor finds a possible route to safety.",
-        "A new obstacle appears in the distance.",
-        "The survivor makes a careful plan."
+        "The survivor wakes up and realizes there is no immediate help.",
+        "They stay calm and study the unfamiliar surroundings.",
+        "They check the supplies they still have.",
+        "Finding a sheltered place becomes the first priority.",
+        "The weather begins to change in the distance.",
+        "They choose a route that avoids exposed ground.",
+        "A distant landmark helps them keep their direction.",
+        "They find useful materials near the edge of the path.",
+        "They build a simple shelter before darkness arrives.",
+        "The first night tests the plan they made.",
+        "At sunrise, they inspect the area for safer options.",
+        "They search carefully for signs of a reliable water source.",
+        "A distant trail suggests that other people may be nearby.",
+        "They mark their route so they can find their way back.",
+        "A sudden setback forces them to rethink the plan.",
+        "They compare the risks and choose the safer path.",
+        "The landscape opens up and reveals a new landmark.",
+        "They conserve energy and keep a steady pace.",
+        "The weather improves, making travel easier.",
+        "They reach a sheltered area and reassess their progress.",
+        "A promising clue gives them a reason to continue.",
+        "They prepare a visible signal in a clear open area.",
+        "The hours pass, and patience becomes part of the plan.",
+        "A sound in the distance makes them look toward the horizon.",
+        "They avoid rushing and check that the area is safe.",
+        "The next stretch is difficult, but the route is clearer.",
+        "They find evidence that someone passed through recently.",
+        "They follow the safest visible path toward the landmark.",
+        "The light begins to fade, so they stop before conditions worsen.",
+        "They improve their shelter and protect their supplies.",
+        "A quiet morning brings another chance to move.",
+        "They spot a route that avoids the roughest terrain.",
+        "The journey becomes more manageable as they follow the plan.",
+        "A new obstacle appears, but they do not take needless risks.",
+        "They wait for better conditions before continuing.",
+        "The clouds clear and visibility improves.",
+        "They recognize a familiar feature from earlier in the journey.",
+        "Their notes help them avoid going in circles.",
+        "They reach higher ground and scan the distant landscape.",
+        "A possible way out finally comes into view.",
+        "They move toward it while keeping a safe pace.",
+        "The route narrows, so they proceed carefully.",
+        "They find a safer crossing and continue.",
+        "A distant structure or trail offers a stronger clue.",
+        "They make one final check of their remaining supplies.",
+        "The surroundings begin to look more familiar.",
+        "They reach a place where a rescue signal can be seen.",
+        "They make themselves visible and wait in a safe spot.",
+        "Time passes, but they keep the signal clear.",
+        "A distant response suggests that help has noticed them.",
+        "They stay where they can be seen instead of wandering.",
+        "The sound grows clearer as help approaches.",
+        "The long journey is nearly over.",
+        "They are finally able to leave the dangerous area.",
+        "The experience changes how they think about preparation.",
+        "They remember the small decisions that helped them stay safe.",
+        "The landscape that once felt impossible is now behind them.",
+        "The survivor is no longer alone.",
+        "The story ends with one lesson: preparation and calm decisions matter."
     ]
-    return [f"SCENE {i + 1}\nLOCATION: {topic}\nACTION: {beats[(i - 1) % len(beats)]}\n"
-            for i in range(1, count + 1)]
+    return [
+        f"SCENE {i + 1}\\nLOCATION: {topic}\\nACTION: {beats[i % len(beats)]}\\n"
+        for i in range(count)
+    ]
 
 def S(v):
     return int(v * SCALE)
