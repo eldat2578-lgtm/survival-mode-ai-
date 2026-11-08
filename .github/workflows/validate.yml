@@ -52,4 +52,16 @@ jobs:
           assert "codec_name=" in probe.stdout, "MP4 has no audio stream"
           print("MP4 + audio smoke test passed:", output.stat().st_size, "bytes", probe.stdout.strip())
           output.unlink()
+
+          import os
+          os.environ["SURVIVAL_SKIP_AUDIO"] = "1"
+          vertical = render_video(
+              "a deserted island", 1, 1, "smoke_test_vertical.mp4", vertical=True
+          )
+          vertical_reader = imageio.get_reader(str(vertical))
+          vertical_frame = vertical_reader.get_data(0)
+          vertical_reader.close()
+          assert vertical_frame.shape == (1280, 720, 3), vertical_frame.shape
+          vertical.unlink()
+          print("Vertical 9:16 smoke test passed")
           PY
