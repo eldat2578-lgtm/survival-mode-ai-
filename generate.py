@@ -97,7 +97,7 @@ def make_scenes(topic, count):
         "The story ends with one lesson: preparation and calm decisions matter."
     ]
     return [
-        f"SCENE {i + 1}\\nLOCATION: {topic}\\nACTION: {beats[i % len(beats)]}\\n"
+        f"SCENE {i + 1}\nLOCATION: {topic}\nACTION: {beats[i % len(beats)]}\n"
         for i in range(count)
     ]
 
