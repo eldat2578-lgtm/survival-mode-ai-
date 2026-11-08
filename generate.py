@@ -5,6 +5,7 @@ from pathlib import Path
 
 import imageio.v2 as imageio
 import numpy as np
+from audio_track import add_audio
 from PIL import Image, ImageDraw, ImageFont
 
 HISTORY_FILE = Path("topics_history.txt")
@@ -171,6 +172,8 @@ def render_video(topic, scene_count, seconds_per_scene, filename):
                 # antialias downsample
                 im=im.resize((WIDTH,HEIGHT),Image.Resampling.LANCZOS)
                 writer.append_data(np.asarray(im))
+    narration = topic + ". " + " ".join(s.split("ACTION: ", 1)[1].strip() for s in scenes)
+    add_audio(output, narration, scene_count * seconds_per_scene)
     print("VIDEO CREATED:",output)
     return output
 
