@@ -252,7 +252,7 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     shorts_scenes = make_scenes(shorts_topic, 6)
-    long_scenes = make_scenes(long_topic, 30)
+    long_scenes = make_scenes(long_topic, 60)
 
     shorts_file = SCRIPT_DIR / f"shorts_{timestamp}.txt"
     long_file = SCRIPT_DIR / f"long_{timestamp}.txt"
