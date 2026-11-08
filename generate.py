@@ -1,6 +1,10 @@
+
 import random
 from datetime import datetime
 from pathlib import Path
+
+HISTORY_FILE = Path("topics_history.txt")
+SCRIPT_DIR = Path("scripts")
 
 PLACES = [
     "a deserted island",
@@ -8,35 +12,37 @@ PLACES = [
     "a dense forest",
     "the Arctic",
     "a remote desert",
-    "a snowy mountain"
+    "a snowy mountain",
+    "an empty underground station",
+    "a remote village"
 ]
 
 SITUATIONS = [
-    "What If You Woke Up Alone in",
     "What If You Got Stranded in",
-    "What If You Had to Survive in",
-    "What If You Were Lost in"
+    "What If You Woke Up Alone in",
+    "How Would You Survive in",
+    "Could You Survive in"
 ]
 
 CHALLENGES = [
     "with No Food or Water?",
     "During a Massive Storm?",
     "Without Electricity?",
-    "During the Coldest Night?"
+    "During the Coldest Night?",
+    "With No Way to Contact Anyone?"
 ]
 
-HISTORY_FILE = Path("topics_history.txt")
-SCRIPT_DIR = Path("scripts")
-
-def generate_topic():
-    history = set()
-
+def load_history():
     if HISTORY_FILE.exists():
-        history = set(
+        return set(
             line.strip()
-            for line in HISTORY_FILE.read_text(encoding="utf-8").splitlines()
+            for line in HISTORY_FILE.read_text(
+                encoding="utf-8"
+            ).splitlines()
         )
+    return set()
 
+def generate_topic(history):
     combinations = [
         f"{situation} {place} {challenge}"
         for situation in SITUATIONS
@@ -44,66 +50,111 @@ def generate_topic():
         for challenge in CHALLENGES
     ]
 
-    available = [topic for topic in combinations if topic not in history]
+    available = [
+        topic for topic in combinations
+        if topic not in history
+    ]
 
-    if not available:
-        raise RuntimeError("All available topics have been used!")
+    if len(available) < 2:
+        raise RuntimeError("Not enough unused topics left!")
 
-    return random.choice(available)
+    return random.sample(available, 2)
 
-def create_script(topic):
+def create_shorts(topic):
     return f"""TITLE: {topic}
 
-[HOOK]
-Imagine waking up in a place where nobody can hear you.
-You have no phone signal and no idea what to do.
-Would you survive?
+[HOOK - 0:00]
+Imagine being completely alone.
+No help. No signal. No easy way out.
 
-[INTRO]
-Today, we explore one survival scenario:
+[SCENARIO - 0:08]
 {topic}
 
-[PART 1 - THE SITUATION]
-You realize that you are completely alone.
-Your first priority is to stay calm and understand your surroundings.
+[CHALLENGE - 0:18]
+Your first priority is to stay calm.
+Look for a safe place and assess your surroundings.
 
-[PART 2 - THE FIRST CHALLENGE]
-You need to find a safe place away from immediate dangers.
-Avoid unnecessary risks and conserve your energy.
+[SURVIVAL - 0:30]
+Think about water, warmth, and communication.
+Avoid unnecessary risks.
 
-[PART 3 - SURVIVAL]
-Think carefully about water, warmth, and communication.
-If possible, contact emergency services and signal for help.
+[ENDING - 0:45]
+Would you survive this situation?
+Follow SURVIVAL MODE for more scenarios.
+"""
 
-[PART 4 - THE BIGGEST MISTAKE]
-Panic can make decisions harder.
-Take things one step at a time and focus on safety.
+def create_long_video(topic):
+    return f"""TITLE: {topic}
 
-[ENDING]
+[INTRODUCTION]
+Imagine finding yourself in a place where
+everything familiar has disappeared.
+You must think carefully and make smart decisions.
+
+[THE SITUATION]
+{topic}
+
+[CHAPTER 1 - FIRST MOMENTS]
+The first challenge is understanding your situation.
+Stay calm and check your surroundings.
+Do not rush into unknown areas.
+
+[CHAPTER 2 - BASIC NEEDS]
+Think about safe drinking water, shelter,
+and protection from the weather.
+These needs should guide your decisions.
+
+[CHAPTER 3 - MAKING A PLAN]
+Divide the situation into smaller problems.
+Consider the safest options available.
+Avoid unnecessary risks.
+
+[CHAPTER 4 - COMMUNICATION]
+If possible, contact emergency services.
+Use safe ways to signal for help.
+Preserve your phone battery if you have one.
+
+[CHAPTER 5 - COMMON MISTAKES]
+Panic and rushed decisions can make things worse.
+Think before acting and focus on safety.
+
+[CONCLUSION]
 Survival is not about being fearless.
-It is about staying calm and making smart decisions.
+It is about staying calm, thinking clearly,
+and making responsible decisions.
 
 Subscribe to SURVIVAL MODE for more scenarios.
 """
 
 def main():
-    topic = generate_topic()
+    history = load_history()
+    topics = generate_topic(history)
 
     SCRIPT_DIR.mkdir(exist_ok=True)
 
     date = datetime.now().strftime("%Y-%m-%d")
-    script = create_script(topic)
 
-    script_file = SCRIPT_DIR / f"script_{date}.txt"
-    script_file.write_text(script, encoding="utf-8")
+    shorts_file = SCRIPT_DIR / f"shorts_{date}.txt"
+    long_file = SCRIPT_DIR / f"long_{date}.txt"
+
+    shorts_file.write_text(
+        create_shorts(topics[0]),
+        encoding="utf-8"
+    )
+
+    long_file.write_text(
+        create_long_video(topics[1]),
+        encoding="utf-8"
+    )
 
     with HISTORY_FILE.open("a", encoding="utf-8") as file:
-        file.write(topic + "\n")
+        for topic in topics:
+            file.write(topic + "\n")
 
     print("SURVIVAL MODE")
-    print("NEW TOPIC:", topic)
-    print("SCRIPT CREATED:", script_file)
-    print("\n", script)
+    print("SHORTS:", topics[0])
+    print("LONG VIDEO:", topics[1])
+    print("CREATED:", shorts_file, long_file)
 
 if __name__ == "__main__":
     main()
