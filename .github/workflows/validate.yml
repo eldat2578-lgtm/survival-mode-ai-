@@ -20,6 +20,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Check Python syntax
-        run: python -m py_compile generate.py
+        run: python -m py_compile generate.py audio_track.py
       - name: Check required imports
-        run: python -c "import PIL, imageio, numpy"
+        run: python -c "import PIL, imageio, numpy, edge_tts"
