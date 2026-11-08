@@ -4,6 +4,8 @@
 name: SURVIVAL MODE Automation
 
 on:
+  push:
+    branches: [upgrade/polished-2d-renderer]
   workflow_dispatch:
   schedule:
     - cron: "0 12 * * *"
@@ -14,6 +16,7 @@ permissions:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
 
     steps:
       - name: Download project
