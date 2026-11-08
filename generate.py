@@ -33,11 +33,16 @@ CHALLENGES = [
     "With No Way to Contact Anyone?"
 ]
 
-STYLE = (
-    "2D minimalist animation, white stickman with a round "
-    "white head, black outline, thin black limbs, simple face, "
-    "clean black line art, realistic present-day 2026 environment, "
-    "consistent character design, no 3D"
+    STYLE = (
+    "Use the exact same character in every scene. "
+    "Classic minimalist 2D stickman. "
+    "Large round white head with thick black outline. "
+    "Two small black eyes and a simple curved smile. "
+    "Thin black line body, arms and legs. "
+    "No clothes, no hair, no accessories, no 3D. "
+    "Consistent proportions in every scene. "
+    "Realistic present-day 2026 environment. "
+    "Clean 2D cartoon animation."
 )
 
 def load_history():
