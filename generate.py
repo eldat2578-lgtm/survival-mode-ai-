@@ -1,6 +1,7 @@
 import math
 import os
 import random
+import textwrap
 from functools import lru_cache
 from datetime import datetime
 from pathlib import Path
@@ -211,7 +212,7 @@ def character(im, frame, scene_index):
         d.ellipse((S(x+13),S(y-19),S(x+25),S(y-3)),fill=ink)
     d.arc((S(x-22),S(y+1),S(x+22),S(y+34)),10,165,fill=ink,width=S(4))
 
-def render_video(topic, scene_count, seconds_per_scene, filename):
+def render_video(topic, scene_count, seconds_per_scene, filename, vertical=False):
     VIDEO_DIR.mkdir(exist_ok=True)
     output=VIDEO_DIR/filename
     scenes=make_scenes(topic,scene_count)
@@ -234,6 +235,22 @@ def render_video(topic, scene_count, seconds_per_scene, filename):
                 # antialias downsample
                 if SCALE != 1:
                     im=im.resize((WIDTH,HEIGHT),Image.Resampling.LANCZOS)
+                if vertical:
+                    # Reframe the complete scene into a true 9:16 Shorts canvas.
+                    canvas=im.resize((720,1280),Image.Resampling.LANCZOS).filter(
+                        __import__("PIL.ImageFilter", fromlist=["GaussianBlur"]).GaussianBlur(26)
+                    )
+                    canvas=__import__("PIL.ImageEnhance", fromlist=["Brightness"]).Brightness(canvas).enhance(0.42)
+                    scene=im.resize((720,405),Image.Resampling.LANCZOS)
+                    canvas.paste(scene,(0,430))
+                    poster=ImageDraw.Draw(canvas)
+                    poster.text((42,150),"SURVIVAL MODE",font=font(30,True),fill=(255,190,112))
+                    for line_no,line in enumerate(textwrap.wrap(topic, width=32)[:3]):
+                        poster.text((42,215+line_no*43),line,font=font(24,True),fill=(250,250,247))
+                    poster.text((42,880),f"SCENE {si+1:02d} / {scene_count:02d}",
+                                font=font(22,True),fill=(255,190,112))
+                    poster.text((42,1140),"STAY CALM  •  THINK CLEAR",font=font(22,True),fill=(250,250,247))
+                    im=canvas
                 writer.append_data(np.asarray(im))
     narration = topic + ". " + " ".join(s.split("ACTION: ", 1)[1].strip() for s in scenes)
     if os.environ.get("SURVIVAL_SKIP_AUDIO") != "1":
@@ -251,7 +268,7 @@ def main():
     long_scenes=make_scenes(long_topic,60)
     (SCRIPT_DIR/f"shorts_{timestamp}.txt").write_text(f"TITLE: {shorts_topic}\n\n"+"\n".join(shorts_scenes),encoding="utf-8")
     (SCRIPT_DIR/f"long_{timestamp}.txt").write_text(f"TITLE: {long_topic}\n\n"+"\n".join(long_scenes),encoding="utf-8")
-    render_video(shorts_topic,6,8,f"shorts_{timestamp}.mp4")
+    render_video(shorts_topic,6,8,f"shorts_{timestamp}.mp4",vertical=True)
     render_video(long_topic,60,12,f"long_{timestamp}.mp4")
     with HISTORY_FILE.open("a",encoding="utf-8") as f:
         f.write(shorts_topic+"\n"+long_topic+"\n")
