@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 HISTORY_FILE = Path("topics_history.txt")
 SCRIPT_DIR = Path("scripts")
 VIDEO_DIR = Path("videos")
-WIDTH, HEIGHT, SCALE, FPS = 1280, 720, 2, 12
+WIDTH, HEIGHT, SCALE, FPS = 1280, 720, 1, 12
 W, H = WIDTH * SCALE, HEIGHT * SCALE
 
 PLACES = ["a deserted island", "an abandoned city", "a dense forest", "the Arctic",
@@ -175,7 +175,8 @@ def render_video(topic, scene_count, seconds_per_scene, filename):
                 d.rounded_rectangle((S(40),S(706),S(1240),S(712)),radius=S(3),fill=(75,82,91))
                 d.rounded_rectangle((S(40),S(706),S(40+1200*progress),S(712)),radius=S(3),fill=(255,181,91))
                 # antialias downsample
-                im=im.resize((WIDTH,HEIGHT),Image.Resampling.LANCZOS)
+                if SCALE != 1:
+                    im=im.resize((WIDTH,HEIGHT),Image.Resampling.LANCZOS)
                 writer.append_data(np.asarray(im))
     narration = topic + ". " + " ".join(s.split("ACTION: ", 1)[1].strip() for s in scenes)
     if os.environ.get("SURVIVAL_SKIP_AUDIO") != "1":
