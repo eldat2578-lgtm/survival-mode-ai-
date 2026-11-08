@@ -1,5 +1,6 @@
 import math
 import random
+from functools import lru_cache
 from datetime import datetime
 from pathlib import Path
 
@@ -46,7 +47,7 @@ def make_scenes(topic, count):
 def S(v):
     return int(v * SCALE)
 
-def font(size, bold=False):
+@lru_cache(maxsize=32)\ndef font(size, bold=False):
     candidates = (["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"] if bold else
                   ["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"])
     try:
@@ -55,11 +56,13 @@ def font(size, bold=False):
         return ImageFont.load_default()
 
 def gradient(draw):
-    top, bottom = (22, 42, 72), (238, 180, 112)
-    for y in range(H):
-        t = y / max(1, H - 1)
-        col = tuple(int(top[i] * (1 - t) + bottom[i] * t) for i in range(3))
-        draw.line((0, y, W, y), fill=col)
+    # Vectorized gradient: far faster than drawing 1,440 individual scanlines per frame.
+    top = np.array((22, 42, 72), dtype=np.float32)
+    bottom = np.array((238, 180, 112), dtype=np.float32)
+    t = np.linspace(0.0, 1.0, H, dtype=np.float32)[:, None, None]
+    row = top[None, None, :] * (1.0 - t) + bottom[None, None, :] * t
+    pixels = np.broadcast_to(row.astype(np.uint8), (H, W, 3)).copy()
+    draw._image.paste(Image.fromarray(pixels))
 
 def polygon(draw, points, fill, outline=None, width=1):
     pts = [(S(x), S(y)) for x, y in points]
@@ -70,6 +73,7 @@ def polygon(draw, points, fill, outline=None, width=1):
 def background(topic, frame, scene_index):
     im = Image.new("RGB", (W, H))
     d = ImageDraw.Draw(im)
+    d._image = im
     gradient(d)
     drift = (frame * 0.45 + scene_index * 23) % 160
     # distant clouds and warm atmospheric sun
