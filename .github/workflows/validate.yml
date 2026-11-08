@@ -26,9 +26,7 @@ jobs:
         run: python -m py_compile generate.py audio_track.py
       - name: Check required imports
         run: python -c "import PIL, imageio, numpy, edge_tts"
-      - name: Render and inspect a real MP4 sample
-        env:
-          SURVIVAL_SKIP_AUDIO: "1"
+      - name: Render and inspect a real MP4 sample with audio
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -45,6 +43,13 @@ jobs:
           reader.close()
           assert frame.shape == (720, 1280, 3), frame.shape
           assert metadata.get("fps", 0) >= 10, metadata
-          print("MP4 smoke test passed:", output.stat().st_size, "bytes")
+          import subprocess
+          probe = subprocess.run(
+              ["ffprobe", "-v", "error", "-select_streams", "a:0",
+               "-show_entries", "stream=codec_name", "-of", "default=nw=1", str(output)],
+              check=True, capture_output=True, text=True
+          )
+          assert "codec_name=" in probe.stdout, "MP4 has no audio stream"
+          print("MP4 + audio smoke test passed:", output.stat().st_size, "bytes", probe.stdout.strip())
           output.unlink()
           PY
