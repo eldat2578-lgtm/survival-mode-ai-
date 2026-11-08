@@ -1,4 +1,5 @@
 
+
 import random
 from datetime import datetime
 from pathlib import Path
@@ -32,129 +33,135 @@ CHALLENGES = [
     "With No Way to Contact Anyone?"
 ]
 
+STYLE = (
+    "2D minimalist animation, white stickman with a round "
+    "white head, black outline, thin black limbs, simple face, "
+    "clean black line art, realistic present-day 2026 environment, "
+    "consistent character design, no 3D"
+)
+
 def load_history():
     if HISTORY_FILE.exists():
-        return set(
-            line.strip()
-            for line in HISTORY_FILE.read_text(
-                encoding="utf-8"
-            ).splitlines()
-        )
+        return set(HISTORY_FILE.read_text(
+            encoding="utf-8"
+        ).splitlines())
     return set()
 
-def generate_topic(history):
+def generate_topics(history):
     combinations = [
-        f"{situation} {place} {challenge}"
-        for situation in SITUATIONS
-        for place in PLACES
-        for challenge in CHALLENGES
+        f"{s} {p} {c}"
+        for s in SITUATIONS
+        for p in PLACES
+        for c in CHALLENGES
     ]
 
-    available = [
-        topic for topic in combinations
-        if topic not in history
-    ]
+    available = [x for x in combinations if x not in history]
 
     if len(available) < 2:
-        raise RuntimeError("Not enough unused topics left!")
+        raise RuntimeError("Not enough unused topics!")
 
     return random.sample(available, 2)
 
-def create_shorts(topic):
-    return f"""TITLE: {topic}
+def make_scenes(topic, count, video_type):
+    scenes = []
 
-[HOOK - 0:00]
-Imagine being completely alone.
-No help. No signal. No easy way out.
+    for number in range(1, count + 1):
+        if number == 1:
+            action = "The stickman discovers the dangerous situation."
+        elif number == 2:
+            action = "The stickman looks around and studies the surroundings."
+        elif number == 3:
+            action = "The stickman searches for a safe place."
+        elif number == count:
+            action = "The stickman looks toward the horizon with hope."
+        else:
+            action = (
+                "The stickman carefully moves through the environment "
+                "and considers the next safe decision."
+            )
 
-[SCENARIO - 0:08]
+        scenes.append(
+            f"""SCENE {number}
+
+VISUAL:
+{STYLE}
+
+LOCATION:
 {topic}
 
-[CHALLENGE - 0:18]
-Your first priority is to stay calm.
-Look for a safe place and assess your surroundings.
+ACTION:
+{action}
 
-[SURVIVAL - 0:30]
-Think about water, warmth, and communication.
-Avoid unnecessary risks.
+IMAGE PROMPT:
+A white minimalist stickman with a round white head,
+black outline and thin black limbs. {action}
+Environment: {topic}. {STYLE}.
+Wide cinematic composition, clear subject, no text.
 
-[ENDING - 0:45]
-Would you survive this situation?
-Follow SURVIVAL MODE for more scenarios.
+NARRATION:
+The situation becomes more challenging.
+The stickman must stay calm and make careful decisions.
 """
+        )
 
-def create_long_video(topic):
-    return f"""TITLE: {topic}
-
-[INTRODUCTION]
-Imagine finding yourself in a place where
-everything familiar has disappeared.
-You must think carefully and make smart decisions.
-
-[THE SITUATION]
-{topic}
-
-[CHAPTER 1 - FIRST MOMENTS]
-The first challenge is understanding your situation.
-Stay calm and check your surroundings.
-Do not rush into unknown areas.
-
-[CHAPTER 2 - BASIC NEEDS]
-Think about safe drinking water, shelter,
-and protection from the weather.
-These needs should guide your decisions.
-
-[CHAPTER 3 - MAKING A PLAN]
-Divide the situation into smaller problems.
-Consider the safest options available.
-Avoid unnecessary risks.
-
-[CHAPTER 4 - COMMUNICATION]
-If possible, contact emergency services.
-Use safe ways to signal for help.
-Preserve your phone battery if you have one.
-
-[CHAPTER 5 - COMMON MISTAKES]
-Panic and rushed decisions can make things worse.
-Think before acting and focus on safety.
-
-[CONCLUSION]
-Survival is not about being fearless.
-It is about staying calm, thinking clearly,
-and making responsible decisions.
-
-Subscribe to SURVIVAL MODE for more scenarios.
-"""
+    return "\n".join(scenes)
 
 def main():
     history = load_history()
-    topics = generate_topic(history)
+    shorts_topic, long_topic = generate_topics(history)
 
     SCRIPT_DIR.mkdir(exist_ok=True)
 
-    date = datetime.now().strftime("%Y-%m-%d")
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    shorts_file = SCRIPT_DIR / f"shorts_{date}.txt"
-    long_file = SCRIPT_DIR / f"long_{date}.txt"
+    shorts = f"""TITLE: {shorts_topic}
 
-    shorts_file.write_text(
-        create_shorts(topics[0]),
-        encoding="utf-8"
-    )
+TYPE: SHORTS
+LENGTH: 30-60 SECONDS
 
-    long_file.write_text(
-        create_long_video(topics[1]),
-        encoding="utf-8"
-    )
+INTRO:
+Imagine being completely alone.
+
+TOPIC:
+{shorts_topic}
+
+{make_scenes(shorts_topic, 6, "SHORTS")}
+
+ENDING:
+Would you survive? Subscribe to SURVIVAL MODE.
+"""
+
+    long_video = f"""TITLE: {long_topic}
+
+TYPE: LONG VIDEO
+LENGTH: 5-7 MINUTES
+
+INTRO:
+Imagine waking up in a place where survival
+depends on your decisions.
+
+TOPIC:
+{long_topic}
+
+{make_scenes(long_topic, 30, "LONG VIDEO")}
+
+ENDING:
+Survival is about staying calm and making smart decisions.
+Subscribe to SURVIVAL MODE for more scenarios.
+"""
+
+    shorts_file = SCRIPT_DIR / f"shorts_{timestamp}.txt"
+    long_file = SCRIPT_DIR / f"long_{timestamp}.txt"
+
+    shorts_file.write_text(shorts, encoding="utf-8")
+    long_file.write_text(long_video, encoding="utf-8")
 
     with HISTORY_FILE.open("a", encoding="utf-8") as file:
-        for topic in topics:
-            file.write(topic + "\n")
+        file.write(shorts_topic + "\n")
+        file.write(long_topic + "\n")
 
-    print("SURVIVAL MODE")
-    print("SHORTS:", topics[0])
-    print("LONG VIDEO:", topics[1])
-    print("CREATED:", shorts_file, long_file)
+    print("SHORTS CREATED:", shorts_file)
+    print("LONG VIDEO CREATED:", long_file)
 
 if __name__ == "__main__":
     main()
