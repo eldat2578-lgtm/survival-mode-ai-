@@ -268,12 +268,12 @@ def main():
     )
 
     render_video(
-        shorts_topic, 6, 3,
+        shorts_topic, 6, 8,
         f"shorts_{timestamp}.mp4"
     )
 
     render_video(
-        long_topic, 30, 10,
+        long_topic, 60, 12,
         f"long_{timestamp}.mp4"
     )
 
