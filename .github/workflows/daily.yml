@@ -1,0 +1,12 @@
+
+name: SURVIVAL MODE Automation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start automation
+        run: echo "SURVIVAL MODE automation is running!"
