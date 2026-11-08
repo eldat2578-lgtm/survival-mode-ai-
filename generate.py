@@ -131,8 +131,8 @@ def character(im, frame, scene_index):
     d.ellipse((S(x-90),S(637),S(x+90),S(660)),fill=(35,39,42))
     # legs with alternating stride
     hip=(x,y+180)
-    d.line((S(*hip),S(x-45+walk*35),S(300)),fill=ink,width=S(13))
-    d.line((S(x,y+180),S(x+45-walk*35),S(300)),fill=ink,width=S(13))
+    d.line((S(x),S(y+180),S(x-45+walk*35),S(y+300)),fill=ink,width=S(13))
+    d.line((S(x),S(y+180),S(x+45-walk*35),S(y+300)),fill=ink,width=S(13))
     # torso and arms
     d.line((S(x),S(y+48),S(x),S(y+185)),fill=ink,width=S(15))
     d.line((S(x),S(y+85),S(x-70-walk*20),S(y+145+walk*16)),fill=ink,width=S(12))
