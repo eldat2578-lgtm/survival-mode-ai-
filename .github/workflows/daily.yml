@@ -3,10 +3,21 @@ name: SURVIVAL MODE Automation
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * *"
 
 jobs:
-  test:
+  generate:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Start automation
-        run: echo "SURVIVAL MODE automation is running!"
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run generator
+        run: python generate.py
