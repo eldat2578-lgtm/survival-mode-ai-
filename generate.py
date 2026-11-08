@@ -95,7 +95,8 @@ def make_scenes(topic, count):
         "They remember the small decisions that helped them stay safe.",
         "The landscape that once felt impossible is now behind them.",
         "The survivor is no longer alone.",
-        "The story ends with one lesson: preparation and calm decisions matter."
+        "The story ends with one lesson: preparation and calm decisions matter.",
+        "With help finally reached, the survivor can begin again with a new sense of hope."
     ]
     return [
         f"SCENE {i + 1}\nLOCATION: {topic}\nACTION: {beats[i % len(beats)]}\n"
