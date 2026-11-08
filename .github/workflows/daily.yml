@@ -1,5 +1,6 @@
 
 
+
 name: SURVIVAL MODE Automation
 
 on:
@@ -28,6 +29,13 @@ jobs:
 
       - name: Run generator
         run: python generate.py
+
+      - name: Upload generated videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: SURVIVAL-MODE-Videos
+          path: videos/*.mp4
+          retention-days: 30
 
       - name: Save generated files
         run: |
