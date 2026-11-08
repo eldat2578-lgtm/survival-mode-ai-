@@ -5,6 +5,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
+import imageio_ffmpeg
 
 
 def _make_music(path: Path, duration: float) -> None:
@@ -67,7 +68,7 @@ def add_audio(video_path, narration, duration):
             audio_map = "[a]"
 
         command = [
-            "ffmpeg", "-y", *inputs,
+            imageio_ffmpeg.get_ffmpeg_exe(), "-y", *inputs,
             "-filter_complex", filter_graph,
             "-map", "0:v:0", "-map", audio_map,
             "-c:v", "copy", "-c:a", "aac", "-b:a", "160k",
